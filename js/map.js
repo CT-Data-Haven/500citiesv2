@@ -134,6 +134,7 @@ function choropleth() {
         circles.call(cityTip);
         circles.on('mouseover', mouseoverCity)
                 .on('mouseout', mouseoutCity)
+                .on('touchend', mouseoverCity)
                 .on('click', toggleZoom);
 
         // info box of what city is zoomed in, plus its value
