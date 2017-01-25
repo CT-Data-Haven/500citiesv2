@@ -1,0 +1,14 @@
+path.vectorPaths {
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    /*stroke-width: 1px;*/
+}
+
+.major_road {
+    stroke: #e6dddf;
+}
+
+.highway {
+    stroke: #e3a8ff;
+}

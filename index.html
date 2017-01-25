@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+    <title>500 Cities: Connecticut</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/keen-dashboards.css" />
+    <link rel="stylesheet" href="css/vector.css" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+    <link rel="stylesheet" href="css/tooltip.css" />
+
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-queue/3.0.3/d3-queue.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.19.0/d3-legend.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/2.2.0/topojson.min.js"></script>
+    <script src="https://d3js.org/d3-tile.v0.0.min.js"></script>
+    <script src="https://unpkg.com/simple-statistics@2.2.0/dist/simple-statistics.min.js"></script>
+
+
+    <script src="js/main.js"></script>
+    <script src="js/menus.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/dots.js"></script>
+
+</head>
+<body class="application">
+    <div class="container">
+        <div class="row col-md-12">
+            <h3>500 Cities Project: Connecticut</h3>
+        </div>
+        <div class="row col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Menus</h5>
+                </div>
+                <div class="panel-body">
+                    <form id="menu" class="form-horizontal">
+                        <div class="form-group form-group-sm">
+                            <label for="topicMenu" class="control-label col-sm-4 col-md-3">Select category</label>
+                            <div class="controls col-sm-8 col-md-9">
+                                <select name="topicMenu" id="topicMenu" class="form-control"></select>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label for="indicMenu" class="control-label col-sm-4 col-md-3">Select indicator to map</label>
+                            <div class="controls col-sm-8 col-md-9">
+                                <select name="indicMenu" id="indicMenu" class="form-control"></select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="row col-md-12">
+
+            <div class="col-md-12">
+                <div class="chart-wrapper">
+                    <div class="chart-title indic-header h5" id="map-title"></div>
+                    <div class="chart-stage row" id="map">
+                        <!-- <div id="tiles"></div> -->
+                        <div class="hidden" id="reset">Reset</div>
+                    </div>
+
+                    <div class="chart-stage row" id="dots"></div>
+                    <div class="chart-notes"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>
