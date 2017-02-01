@@ -1,29 +1,29 @@
 Category,CategoryID,Short_Question_Text,Measure,MeasureId
-Prevention,PREVENT,Annual Checkup,Visits to doctor for routine checkup within the past Year among adults aged >=18 Years,CHECKUP
-Health Outcomes,HLTHOUT,Arthritis,Arthritis among adults aged >=18 Years,ARTHRITIS
-Unhealthy Behaviors,UNHBEH,Binge Drinking,Binge drinking among adults aged >=18 Years,BINGE
-Health Outcomes,HLTHOUT,Cancer (except skin),Cancer (excluding skin cancer) among adults aged >=18 Years,CANCER
-Prevention,PREVENT,Cholesterol Screening,Cholesterol screening among adults aged >=18 Years,CHOLSCREEN
-Health Outcomes,HLTHOUT,Chronic Kidney Disease,Chronic kidney disease among adults aged >=18 Years,KIDNEY
-Prevention,PREVENT,Colorectal Cancer Screening,"Fecal occult blood test, sigmoidoscopy, or colonoscopy among adults aged 50–75 Years",COLON_SCREEN
-Health Outcomes,HLTHOUT,COPD,Chronic obstructive pulmonary disease among adults aged >=18 Years,COPD
-Prevention,PREVENT,Core preventive services for older men,"Older adult men aged >=65 Years who are up to date on a core set of clinical preventive services: Flu shot past Year, PPV shot ever, Colorectal cancer screening",COREM
-Prevention,PREVENT,Core preventive services for older women,"Older adult women aged >=65 Years who are up to date on a core set of clinical preventive services: Flu shot past Year, PPV shot ever, Colorectal cancer screening, and Mammogram past 2 Years",COREW
-Health Outcomes,HLTHOUT,Coronary Heart Disease,Coronary heart disease among adults aged >=18 Years,CHD
-Health Outcomes,HLTHOUT,Current Asthma,Current asthma among adults aged >=18 Years,CASTHMA
-Unhealthy Behaviors,UNHBEH,Current Smoking,Current smoking among adults aged >=18 Years,CSMOKING
-Prevention,PREVENT,Dental Visit,Visits to dentist or dental clinic among adults aged >=18 Years,DENTAL
-Health Outcomes,HLTHOUT,Diabetes,Diagnosed diabetes among adults aged >=18 Years,DIABETES
-Prevention,PREVENT,Health Insurance,Current lack of health insurance among adults aged 18–64 Years,ACCESS2
-Health Outcomes,HLTHOUT,High Blood Pressure,High blood pressure among adults aged >=18 Years,BPHIGH
-Health Outcomes,HLTHOUT,High Cholesterol,High cholesterol among adults aged >=18 Years who have been screened in the past 5 Years,HIGHCHOL
-Prevention,PREVENT,Mammography,Mammography use among women aged 50–74 Years,MAMMOUSE
-Health Outcomes,HLTHOUT,Mental Health,Mental health not good for >=14 days among adults aged >=18 Years,MHLTH
-Unhealthy Behaviors,UNHBEH,Obesity,Obesity among adults aged >=18 Years,OBESITY
-Prevention,PREVENT,Pap Smear Test,Papanicolaou smear use among adult women aged 21–65 Years,PAPTEST
-Unhealthy Behaviors,UNHBEH,Physical Activity,No leisure-time physical activity among adults aged >=18 Years,LPA
-Health Outcomes,HLTHOUT,Physical Health,Physical health not good for >=14 days among adults aged >=18 Years,PHLTH
-Unhealthy Behaviors,UNHBEH,Sleep,Sleeping less than 7 hours among adults aged >=18 Years,SLEEP
-Health Outcomes,HLTHOUT,Stroke,Stroke among adults aged >=18 Years,STROKE
-Prevention,PREVENT,Taking BP Medication,Taking medicine for high blood pressure control among adults aged >=18 Years with high blood pressure,BPMED
-Health Outcomes,HLTHOUT,Teeth Loss,All teeth lost among adults aged >=65 Years,TEETHLOST
+Prevention,PREVENT,Annual Checkup,Visits to doctor for routine checkup within the past year among adults aged 18+ years,CHECKUP
+Health Outcomes,HLTHOUT,Arthritis,Arthritis among adults aged 18+ years,ARTHRITIS
+Unhealthy Behaviors,UNHBEH,Binge Drinking,Binge drinking among adults aged 18+ years,BINGE
+Health Outcomes,HLTHOUT,Cancer (except skin),Cancer (excluding skin cancer) among adults aged 18+ years,CANCER
+Prevention,PREVENT,Cholesterol Screening,Cholesterol screening among adults aged 18+ years,CHOLSCREEN
+Health Outcomes,HLTHOUT,Chronic Kidney Disease,Chronic kidney disease among adults aged 18+ years,KIDNEY
+Prevention,PREVENT,Colorectal Cancer Screening,"Fecal occult blood test, sigmoidoscopy, or colonoscopy among adults aged 50–75 years",COLON_SCREEN
+Health Outcomes,HLTHOUT,COPD,Chronic obstructive pulmonary disease among adults aged 18+ years,COPD
+Prevention,PREVENT,Core preventive services for older men,"Older adult men aged 65+ years who are up to date on a core set of clinical preventive services: Flu shot past year, PPV shot ever, Colorectal cancer screening",COREM
+Prevention,PREVENT,Core preventive services for older women,"Older adult women aged 65+ years who are up to date on a core set of clinical preventive services: Flu shot past year, PPV shot ever, Colorectal cancer screening, and Mammogram past 2 years",COREW
+Health Outcomes,HLTHOUT,Coronary Heart Disease,Coronary heart disease among adults aged 18+ years,CHD
+Health Outcomes,HLTHOUT,Current Asthma,Current asthma among adults aged 18+ years,CASTHMA
+Unhealthy Behaviors,UNHBEH,Current Smoking,Current smoking among adults aged 18+ years,CSMOKING
+Prevention,PREVENT,Dental Visit,Visits to dentist or dental clinic among adults aged 18+ years,DENTAL
+Health Outcomes,HLTHOUT,Diabetes,Diagnosed diabetes among adults aged 18+ years,DIABETES
+Prevention,PREVENT,Health Insurance,Current lack of health insurance among adults aged 18–64 years,ACCESS2
+Health Outcomes,HLTHOUT,High Blood Pressure,High blood pressure among adults aged 18+ years,BPHIGH
+Health Outcomes,HLTHOUT,High Cholesterol,High cholesterol among adults aged 18+ years who have been screened in the past 5 years,HIGHCHOL
+Prevention,PREVENT,Mammography,Mammography use among women aged 50–74 years,MAMMOUSE
+Health Outcomes,HLTHOUT,Mental Health,Mental health not good for at least 14 days among adults aged 18+ years,MHLTH
+Unhealthy Behaviors,UNHBEH,Obesity,Obesity among adults aged 18+ years,OBESITY
+Prevention,PREVENT,Pap Smear Test,Papanicolaou smear use among adult women aged 21–65 years,PAPTEST
+Unhealthy Behaviors,UNHBEH,Physical Activity,No leisure-time physical activity among adults aged 18+ years,LPA
+Health Outcomes,HLTHOUT,Physical Health,Physical health not good for at least 14 days among adults aged 18+ years,PHLTH
+Unhealthy Behaviors,UNHBEH,Sleep,Sleeping less than 7 hours among adults aged 18+ years,SLEEP
+Health Outcomes,HLTHOUT,Stroke,Stroke among adults aged 18+ years,STROKE
+Prevention,PREVENT,Taking BP Medication,Taking medicine for high blood pressure control among adults aged 18+ years with high blood pressure,BPMED
+Health Outcomes,HLTHOUT,Teeth Loss,All teeth lost among adults aged 65+ years,TEETHLOST

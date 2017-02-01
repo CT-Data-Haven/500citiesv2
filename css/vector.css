@@ -1,14 +1,85 @@
-path.vectorPaths {
-    fill: none;
-    stroke-linejoin: round;
-    stroke-linecap: round;
-    /*stroke-width: 1px;*/
+body {
+  margin: 0;
 }
 
-.major_road {
-    stroke: #e6dddf;
+.map {
+  position: relative;
+  overflow: hidden;
+  margin: auto;
 }
 
-.highway {
+.layer {
+  position: absolute;
+  will-change: transform;
+}
+
+.tile {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+}
+
+.tile path {
+  fill: none;
+  stroke: #999;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.tile .major_road {
+    stroke: #d1cecf;
+}
+
+.tile .highway {
     stroke: #e3a8ff;
+}
+
+.tile .minor_road {
+  stroke: #d6daf7;
+}
+
+.tile .rail {
+  stroke: #cdcef1;
+}
+
+.tile .aeroway {
+    stroke: #ddd;
+}
+
+.tile .ferry {
+    stroke: none;
+}
+
+#waterDiv path {
+    stroke: none;
+}
+
+/*.tile .stream,
+.tile .riverbank,
+.tile .basin,
+.tile .water,
+.tile .lake {
+    fill: none;
+    stroke: none;
+}*/
+.tile .river {
+    stroke: #b9cce6;
+}
+
+#waterDiv path.ocean {
+    fill: #bac8da;
+    stroke: none;
+    opacity: 0.3;
+}
+
+.hood {
+    stroke: #4a1169;
+    fill: none;
+    pointer-events: visible;
+}
+
+.city {
+    fill: rgb(173, 150, 205);
+    stroke: none;
+    opacity: 0.1;
 }

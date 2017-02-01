@@ -1,22 +1,44 @@
 function choropleth() {
-    var width = 740;
-    var height = 480;
+
+    var containterWidth = d3.select('#mapWrapper').style('width').replace('px', '');
+    var containerHeight = d3.select('#mapWrapper').style('height').replace('px', '');
+
+    var width = Math.min(740, +containterWidth);
+    var ratio = width / 740;
+    var height = 480 * ratio + 20; // keep proportions
     var data = {};
-    // var stateJson, cityJson, tractJson, cityCsv, tractCsv;
-    var svg;
-    var g;
+    var svg, g;
     var state, proj, path;
-    var isZoomed = false; // true after clicking on a city
+    var isZoomed = false;
     var tractTip;
+    var pi = Math.PI, tau = 2 * pi;
+    var map;
+    var tiler;
+    var zoom;
+    // making a class for state, city, tract outlines to call for redrawing on zoom
+    var ct;
+    var defaultZoom;
 
 
     function chart(selection) {
-        svg = selection
+        map = selection
+            .attr('class', 'map')
+            .style('width', width + 'px')
+            .style('height', height + 'px');
+        map.append('div')
+            .attr('class', 'layer')
+            .attr('id', 'waterDiv');
+        map.append('div')
+            .attr('class', 'layer')
+            .attr('id', 'roadDiv');
+        svg = map.append('div')
+            .attr('class', 'layer')
+            .attr('id', 'shapeDiv')
             .append('svg')
-            // .attr('width', width)
-            // .attr('height', height)
-            .attr('width', '100%')
-            .attr('viewBox', '0 0 ' + width + ' ' + height);
+            // .attr('width', '100%')
+            // .attr('viewBox', '0 0 ' + width + ' ' + height);
+            .attr('width', width)
+            .attr('height', height);
         g = svg.append('g')
             .attr('width', width)
             .attr('height', height);
@@ -27,52 +49,46 @@ function choropleth() {
     function setupMap() {
         state = topojson.feature(data.stateJson, data.stateJson.objects.state);
 
-        // from Learning D3.js Mapping on packtlib
-        proj = d3.geoMercator();
+        proj = d3.geoMercator()
+            .scale(1 / tau)
+            .translate([0, 0]);
         path = d3.geoPath().projection(proj);
-        proj.scale(1).translate([0, 0]);
 
-        var b = path.bounds(state);
-        // bounding box comes as array [[left, bottom], [right, top]]
-        var s = 0.95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height);
-        var t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
-        proj.scale(s).translate(t);
+        var center = proj([-72.75, 41.5]);
 
-        // make tiles
-        var tiler = d3.tile().size([width, height]);
+        tiler = d3.tile().size([width, height]);
 
-        g.selectAll('g.tile')
-            .data(tiler.scale(proj.scale() * 2 * Math.PI).translate(proj([0, 0])))
-            .enter().append('g')
-                .attr('class', 'tile')
-                .each(function(d) {
-                    var tileG = d3.select(this);
+        zoom = d3.zoom()
+            .scaleExtent([1 << 16, 1 << 21])
+            .on('zoom', callZoom);
 
-                    d3.json('https://tile.mapzen.com/mapzen/vector/v1/roads/' + d[2] + '/' + d[0] + '/' + d[1] + '.json?api_key=mapzen-a4SLVBh', function(error, tiles) {
-                        if (error) throw error;
-                        tileG.selectAll('path.vectorPaths')
-                            .data(tiles.features.sort(function(a, b) { return a.properties.sort_key - b.properties.sort_key; }))
-                            .enter().append('path')
-                                .attr('class', function(d) {
-                                    return 'vectorPaths ' + d.properties.kind;
-                                })
-                                .attr('d', path);
-                    });
-                });
+
+
+
 
         drawState();
         drawTracts();
         drawCities();
+
+        // normally default scale = 115000, but need to get ratio with width
+
+        var scale = ratio * 115000;
+
+        defaultZoom = d3.zoomIdentity
+            .translate(width / 2, height / 2)
+            .scale(scale)
+            .translate(-center[0], -center[1]);
+        map.call(zoom)
+            .call(zoom.transform, defaultZoom);
     }
 
     function drawState() {
-        var ct = g.append('g')
+        ct = g.append('g')
             .selectAll('path.state')
             .data(state.features)
             .enter().append('path')
                 .attr('d', path)
-                .attr('class', 'state')
-                .on('click', reset);
+                .attr('class', 'state redraw');
         d3.select('#reset').on('click', reset);
     }
 
@@ -82,7 +98,24 @@ function choropleth() {
             .data(topojson.feature(data.tractJson, data.tractJson.objects.tracts_fips).features)
             .enter().append('path')
                 .attr('d', path)
-                .attr('class', 'tract');
+                .attr('class', 'tract redraw');
+
+        // build legend
+        svg.append('g')
+            .attr('class', 'legendQuant')
+            .attr('transform', 'translate(' + (width - 250) + ',' + (height - 40) + ')');
+
+        tractTip = d3.tip()
+            .attr('class', 'd3-tip dark-tip')
+            .attr('id', 'tractTip');
+    }
+
+    function drawCities() {
+        var cityTip = d3.tip()
+            .attr('class', 'd3-tip')
+            .attr('id', 'cityTip');
+            // .html(function(d) { return d.properties.CityName; });
+        cityTip.offset([-6, 10]); // seems reversed?
 
         var uniquefips = [];
         data.tractJson.objects.tracts_fips.geometries.forEach(function(d) {
@@ -100,55 +133,22 @@ function choropleth() {
         });
 
         // draw merged geos
-        g.append('g')
+        var cities = g.append('g')
             .selectAll('path.city-blob')
             .data(cityBlobs)
             .enter().append('path')
-                .attr('class', 'city-blob')
+                .attr('class', 'city redraw')
                 .attr('d', path)
                 .attr('id', function(d) { return 'city' + d.CityName.replace(' ', ''); });
-        svg.append('g')
-            .attr('class', 'legendQuant')
-            .attr('transform', 'translate(' + (width - 250) + ',' + (height - 60) + ')');
+        cities.call(cityTip);
+        cities.on('mouseover', mouseoverCity)
+            .on('mouseout', mouseoutCity)
+            // .on('touchend', mouseoverCity) // turning touch off so clicking can trigger zoom
+            .on('click', toggleZoom);
 
-        tractTip = d3.tip()
-            .attr('class', 'd3-tip dark-tip')
-            .attr('id', 'tractTip');
-    }
-
-    function drawCities() {
-        var cityTip = d3.tip()
-            .attr('class', 'd3-tip')
-            .attr('id', 'cityTip');
-            // .html(function(d) { return d.properties.CityName; });
-        cityTip.offset([-6, 10]); // seems reversed?
-
-        var circles = g.append('g')
-            .selectAll('circle.city')
-            .data(topojson.feature(data.cityJson, data.cityJson.objects.Cities).features)
-            .enter().append('circle')
-                .attr('cx', function(d) { return proj(d.geometry.coordinates)[0]; })
-                .attr('cy', function(d) { return proj(d.geometry.coordinates)[1]; })
-                .attr('r', 30)
-                .attr('class', 'city');
-        circles.call(cityTip);
-        circles.on('mouseover', mouseoverCity)
-                .on('mouseout', mouseoutCity)
-                .on('touchend', mouseoverCity)
-                .on('click', toggleZoom);
-
-        // info box of what city is zoomed in, plus its value
-        // seems too cluttered
-        // svg.append('text')
-        // d3.select('#map')
-        //     .append('div')
-        //     .attr('id', 'cityRate')
-        //     .attr('class', 'dark-tip');
-            // .attr('transform', 'translate(20, 10)');
-
-        function mouseoverCity(circle) {
+        function mouseoverCity(city) {
             if (!isZoomed) {
-                var cityName = circle.properties.CityName;
+                var cityName = city.CityName;
                 var dot = d3.select('#' + cityName.replace(' ', '') + 'Dot');
                 d3.select(this).classed('city-hover', true);
                 dot.classed('hilite', true);
@@ -156,86 +156,155 @@ function choropleth() {
                 var val = d3.format('.0%')(dot.data()[0].Data_Value);
                 cityTip.html(cityName + ': ' + val);
                 cityTip.show();
-
                 // call dotTip.show() in dots.js
-
             }
         }
-        function mouseoutCity(circle) {
+        function mouseoutCity(city) {
             d3.select(this).classed('city-hover', false);
         // if (!isZoomed) {
             cityTip.html('');
             cityTip.hide();
         // }
-            var cityName = circle.properties.CityName;
+            var cityName = city.CityName;
             if (!isZoomed) {
                 d3.select('#' + cityName.replace(' ', '') + 'Dot')
                     .classed('hilite', false);
             }
-
-
             // call dotTip.hide() in dots.js
         }
+    }
 
+    function callZoom() {
+        var transform = d3.event.transform;
+
+        var tiles = tiler
+            .scale(transform.k)
+            .translate([transform.x, transform.y])();
+
+        proj
+            .scale(transform.k / tau)
+            .translate([transform.x, transform.y]);
+
+        var layers = [
+            {div: 'waterDiv', type: 'water'},
+            {div: 'roadDiv', type: 'roads'}
+        ];
+        layers.forEach(function(layer) {
+            var div = d3.select('#' + layer.div);
+            var img = div
+                .style('transform', stringify(tiles.scale, tiles.translate))
+            // var img = tileHolder
+                // .attr('transform', stringify(tiles.scale, tiles.translate))
+                .selectAll('.tile')
+                .data(tiles, function(d) { return d; });
+            img.exit()
+                .each(function(d) { this._xhr.abort(); })
+                .remove();
+            img.enter().append('svg')
+            // img.enter().append('g')
+                .attr('class', 'tile')
+                .style('left', function(d) { return d[0] * 256 + 'px'; })
+                .style('top', function(d) { return d[1] * 256 + 'px'; })
+                .each(function(d) { this._xhr = render(d, this, layer.type); });
+        });
+
+        // redraw paths
+        d3.selectAll('.redraw').attr('d', path);
     }
 
     function toggleZoom(city) {
-        var circle = d3.select(this);
         if (isZoomed) {
-            // circle.classed('city-nofill', false);
-            return reset();
+            // return reset();
+            // don't want this bc need to be able to get tract tip on touch
         }
         isZoomed = true;
-        d3.selectAll('.city')
-            .classed('.city-hover', false);
         d3.select('#cityTip').style('display', 'none');
-        // var circle = d3.select(this)
-        circle.classed('city-nofill', true);
-        var cityName = city.properties.CityName.replace(' ', '');
+        d3.select('#tractTip').style('display', 'block');
+        var cityName = city.CityName.replace(' ', '');
+        d3.selectAll('.city').classed('city-zoom', true);
 
-        // zoom to bounding box of city, e.g. #cityNewHaven
-        var cityGeo = d3.select('#city' + cityName).data()[0];
-        var bounds = path.bounds(cityGeo),
+
+        var bounds = path.bounds(city),
             dx = bounds[1][0] - bounds[0][0],
             dy = bounds[1][1] - bounds[0][1],
             x = (bounds[0][0] + bounds[1][0]) / 2,
             y = (bounds[0][1] + bounds[1][1]) / 2;
-        var scale = 0.9 / Math.max(dx / width, dy / height);
-        var translate = [width / 2 - scale * x, height / 2 - scale * y];
+        var factor = 0.85 / Math.max(dx / width, dy / height);
 
-        g.transition()
-            .duration(600)
-            .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')' +
-                    'scale(' + scale + ')' +
-                    'translate(' + (-x) + ',' + (-y) + ')'
-            );
-        d3.selectAll('.tract').classed('zoomed', true);
-        d3.selectAll('.city-blob').classed('zoomed', true);
+        var current = d3.zoomTransform(d3.select('#map').node());
+
+        var diff1 = [width / 2 - x, height / 2 - y];
+
+        var t1 = d3.zoomIdentity
+            .translate(current.x + diff1[0], current.y + diff1[1])
+            .scale(current.k);
+
+        map.transition().duration(100)
+            .call(zoom.transform, t1);
+
+        zoom.scaleBy(map, factor);
+        var updated = d3.zoomTransform(d3.select('#map').node());
+        // idk why I have to do this twice to get it to work
+        bounds = path.bounds(city);
+        x = (bounds[0][0] + bounds[1][0]) / 2;
+        y = (bounds[0][1] + bounds[1][1]) / 2;
+        diff2 = [width / 2 - x, height / 2 - y];
+
+        t2 = d3.zoomIdentity
+            .translate(updated.x + diff2[0], updated.y + diff2[1])
+            .scale(updated.k);
+        map.transition().duration(500)
+            .call(zoom.transform, t2);
+
 
         d3.select('#' + cityName + 'Dot')
             .classed('hilite', true);
-
-        // console.log(city.properties);
-        // d3.select('#cityRate')
-        //     .text(city.properties.CityName + ' city-wide: ' + city.properties.Data_Value);
         d3.select('#reset').classed('hidden', false);
     }
 
     function reset() {
-        d3.selectAll('.city').classed('city-nofill', false);
-        d3.selectAll('city-blob').classed('zoomed', false);
-        g.transition()
-            .duration(600)
-            .attr('transform', '');
         d3.select('#cityTip').style('display', 'block');
-        d3.selectAll('.dot')
-            .classed('hilite', false);
+        d3.select('#tractTip').style('display', 'none');
+        d3.selectAll('.dot').classed('hilite', false);
         d3.select('#reset').classed('hidden', true);
+        d3.selectAll('.city').classed('city-zoom', false);
+
+        map.transition().duration(500)
+            .call(zoom.transform, defaultZoom);
 
         isZoomed = false;
     }
 
-/////////////// public function
+    function render(d, node, layer) {
+
+        var tile =  d3.json('https://tile.mapzen.com/mapzen/vector/v1/' + layer + '/' + d[2] + '/' + d[0] + '/' + d[1] + '.json?api_key=mapzen-a4SLVBh', function(error, tileJson) {
+            if (error) throw error;
+
+            var k = Math.pow(2, d[2]) * 256;
+            var tilePath = d3.geoPath()
+                .projection(d3.geoMercator()
+                    .scale(k / tau)
+                    .translate([k / 2 - d[0] * 256, k / 2 - d[1] * 256])
+                    .precision(0));
+
+            d3.select(node).selectAll('path')
+                .data(tileJson.features.sort(function(a, b) { return a.properties.sort_key - b.properties.sort_key; }))
+                .enter().append('path')
+                    .attr('class', function(d) { return d.properties.kind; })
+                    .attr('d', tilePath);
+        });
+        return tile;
+    }
+
+    function stringify(scale, translate) {
+        var k = scale / 256;
+        var r = scale % 1 ? Number : Math.round;
+        return 'matrix3d(' + [k, 0, 0, 0, 0, k, 0, 0, 0, 0, k, 0, r(translate[0] * scale), r(translate[1] * scale), 0, 1] + ')';
+        // return 'translate(' + r(translate[0] * scale) + ',' + r(translate[1] * scale) + ') scale(' + k + ')';
+    }
+
+    // PUBLIC FUNCTIONS
+    //////////////////////////////////////////
 
     chart.colorMap = function(indicatorId) {
         var nested = d3.nest()
@@ -318,14 +387,11 @@ function choropleth() {
             // }
 
         }
-
+        function thresholdLabels(l) {
+            var val = l.domain[l.i];
+            return val ? d3.format('.0%')(val) : '';
+        }
     };
-
-    function thresholdLabels(l) {
-        var val = l.domain[l.i];
-        return val ? d3.format('.0%')(val) : '';
-    }
-
 
     // getters & setters
     chart.width = function(_) {
@@ -348,79 +414,3 @@ function choropleth() {
 
     return chart;
 }
-
-
-
-//
-//
-// function drawMap(stateJson, cityJson, tractJson, cityCsv, tractCsv) {
-//
-//     var width = 960;
-//     var height = 600;
-//
-//     var svg = d3.select('#map')
-//         .append('svg')
-//         .attr('width', width)
-//         .attr('height', height)
-//         .attr('id', 'mapsvg');
-//
-//     var state = topojson.feature(stateJson, stateJson.objects.state);
-//
-//     // from Learning D3.js Mapping on packtlib
-//     var proj = d3.geoMercator();
-//     var path = d3.geoPath().projection(proj);
-//     proj.scale(1).translate([0, 0]);
-//
-//     var b = path.bounds(state);
-//     // bounding box comes as array [[left, bottom], [right, top]]
-//     var s = 0.95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height);
-//     var t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
-//     proj.scale(s).translate(t);
-//
-//     drawState();
-//     drawPolygons(tractJson);
-//
-//
-//
-//
-// /////////////////////////////////////////////////////////////
-//
-//     function drawState() {
-//         var tiler = d3.tile().size([width, height]);
-//
-//         d3.select('#mapsvg')
-//             .selectAll('g')
-//             .data(tiler.scale(proj.scale() * 2 * Math.PI).translate(proj([0, 0])))
-//             .enter().append('g')
-//                 .each(function(d) {
-//                     var g = d3.select(this);
-//
-//                     d3.json('https://tile.mapzen.com/mapzen/vector/v1/roads/' + d[2] + '/' + d[0] + '/' + d[1] + '.json?api_key=mapzen-a4SLVBh', function(error, tiles) {
-//                         if (error) throw error;
-//                         g.selectAll('path')
-//                             .data(tiles.features.sort(function(a, b) { return a.properties.sort_key - b.properties.sort_key; }))
-//                             .enter().append('path')
-//                                 .attr('class', function(d) {
-//                                     return d.properties.kind;
-//                                 })
-//                                 .attr('d', path);
-//                     });
-//                 });
-//
-//         svg.append('g')
-//             .selectAll('path')
-//             .data(state.features)
-//             .enter().append('path')
-//                 .attr('d', path)
-//                 .attr('class', 'state');
-//     }
-//
-//     function drawPolygons(json) {
-//         var svg = d3.select('#mapsvg');
-//     }
-//
-// }
-//
-// function colorMap() {
-//
-// }

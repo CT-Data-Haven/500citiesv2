@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-    <title>500 Cities: Connecticut</title>
+    <title>500 Cities Project: Connecticut</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/keen-dashboards.css" />
@@ -36,11 +36,22 @@
             <h3>500 Cities Project: Connecticut</h3>
         </div>
         <div class="row col-md-12">
+            <p>
+                The following data is from the 500 Cities Project of the CDC, CDC Foundation, and Robert Wood Johnson Foundation. The project makes available estimates of a variety of measures of public health at the census tract-level, allowing cities to better understand health issues locally.
+            </p>
+            <p>
+                The map here displays city- and tract-level data for the 8 cities in Connecticut included in the project. More information on the 500 Cities Project is <a href="https://www.cdc.gov/500cities/">available from the CDC</a>.
+            </p>
+        </div>
+        <div class="row col-md-12">
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h5 class="panel-title">Menus</h5>
-                </div>
+                <!-- <div class="panel-heading">
+                    <h5 class="panel-title">Choose indicator</h5>
+                </div> -->
                 <div class="panel-body">
+                    <p>
+                        To use, choose a category, then an indicator. Click or tap any city to zoom in; data for tracts is available by hovering or tapping on a tract. Click the reset button to zoom back to the whole state.
+                    </p>
                     <form id="menu" class="form-horizontal">
                         <div class="form-group form-group-sm">
                             <label for="topicMenu" class="control-label col-sm-4 col-md-3">Select category</label>
@@ -62,10 +73,9 @@
         <div class="row col-md-12">
 
             <div class="col-md-12">
-                <div class="chart-wrapper">
+                <div class="chart-wrapper" id="mapWrapper">
                     <div class="chart-title indic-header h5" id="map-title"></div>
                     <div class="chart-stage row" id="map">
-                        <!-- <div id="tiles"></div> -->
                         <div class="hidden" id="reset">Reset</div>
                     </div>
 
@@ -74,6 +84,12 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="row col-md-12">
+            <p class="source">
+                <strong>Source: </strong>Centers for Disease Control and Prevention. (2016). <a href="https://www.cdc.gov/500cities/">500 Cities Project.</a> Census tracts shown are the 2015 US Census Bureau <a href="https://www.census.gov/geo/maps-data/data/tiger.html">TIGER boundaries</a>.
+            </p>
         </div>
 
     </div>
