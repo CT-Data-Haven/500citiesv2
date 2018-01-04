@@ -105,7 +105,8 @@ function dotplot() {
             .map(data.tractCsv);
 
         xscale = d3.scaleLinear()
-            .range([0, width])
+            // .range([0, width])
+			.range([margin.left, width - margin.right])
             .nice();
         xaxis = d3.axisBottom()
             .scale(xscale)
@@ -123,7 +124,7 @@ function dotplot() {
             .attr('id', 'dotTip')
             .html(function(d) {
                 var name = d.CityName ? d.CityName : 'Tract ' + d.type;
-                var val = d3.format('.0%')(d.Data_Value);
+                var val = d3.format('.2p')(d.Data_Value);
                 return name + ': ' + val;
             });
 

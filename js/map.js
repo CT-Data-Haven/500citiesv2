@@ -153,7 +153,7 @@ function choropleth() {
                 d3.select(this).classed('city-hover', true);
                 dot.classed('hilite', true);
 
-                var val = d3.format('.0%')(dot.data()[0].Data_Value);
+                var val = d3.format('.2p')(dot.data()[0].Data_Value);
                 cityTip.html(cityName + ': ' + val);
                 cityTip.show();
                 // call dotTip.show() in dots.js
